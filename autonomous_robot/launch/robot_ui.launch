@@ -1,0 +1,4 @@
+<launch>
+    <!-- Start the UI -->
+    <node name="robot_control_ui" pkg="autonomous_robot" type="robot_control_ui.py" output="screen"/>
+</launch>

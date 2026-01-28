@@ -1,0 +1,4 @@
+<launch>
+    <node name="mtr_tester" pkg="autonomous_robot" type="motor_calibrator.py" output="screen">
+    </node>
+</launch>

@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- AMCL localization node with improved timing -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    
+    <!-- Frame parameters -->
+    <param name="odom_frame_id" value="odom"/>
+    <param name="odom_model_type" value="diff"/>
+    <param name="base_frame_id" value="base_link"/>
+    <param name="global_frame_id" value="map"/>
+    
+    <!-- Transform publishing - CRITICAL FIX -->
+    <param name="tf_broadcast" value="true"/>
+    <param name="transform_tolerance" value="0.2"/>  <!-- REDUCED from 0.5 -->
+    
+    <!-- Map parameters -->
+    <param name="use_map_topic" value="true"/>
+    <param name="first_map_only" value="false"/>
+    
+    <!-- Publishing rates -->
+    <param name="gui_publish_rate" value="10.0"/>
+    <param name="save_pose_rate" value="0.5"/>
+    
+    <!-- Topic remapping - ensure correct laser topic -->
+    <remap from="scan" to="/scan"/>
+    
+    <!-- Particle filter parameters -->
+    <param name="min_particles" value="100"/>     <!-- Increased for stability -->
+    <param name="max_particles" value="2000"/>    <!-- Increased for accuracy -->
+    <param name="kld_err" value="0.02"/>          <!-- Slightly relaxed -->
+    <param name="kld_z" value="0.99"/>
+    <param name="update_min_d" value="0.1"/>      <!-- More frequent updates -->
+    <param name="update_min_a" value="0.2"/>      <!-- More frequent updates -->
+    <param name="resample_interval" value="1"/>   <!-- More frequent resampling -->
+    
+    <!-- Recovery parameters -->
+    <param name="recovery_alpha_slow" value="0.001"/>
+    <param name="recovery_alpha_fast" value="0.1"/>
+    
+    <!-- Initial pose with higher uncertainty -->
+    <param name="initial_pose_x" value="0.0"/>
+    <param name="initial_pose_y" value="0.0"/>
+    <param name="initial_pose_a" value="0.0"/>
+    <param name="initial_cov_xx" value="1.0"/>     <!-- Higher uncertainty -->
+    <param name="initial_cov_yy" value="1.0"/>     <!-- Higher uncertainty -->
+    <param name="initial_cov_aa" value="0.5"/>     <!-- Higher uncertainty -->
+    
+    <!-- Laser model parameters -->
+    <param name="laser_min_range" value="0.1"/>
+    <param name="laser_max_range" value="12.0"/>
+    <param name="laser_max_beams" value="180"/>    <!-- Increased for better accuracy -->
+    <param name="laser_z_hit" value="0.9"/>        <!-- Slightly reduced -->
+    <param name="laser_z_short" value="0.05"/>
+    <param name="laser_z_max" value="0.03"/>
+    <param name="laser_z_rand" value="0.02"/>
+    <param name="laser_sigma_hit" value="0.15"/>   <!-- Slightly increased -->
+    <param name="laser_lambda_short" value="0.1"/>
+    <param name="laser_likelihood_max_dist" value="2.0"/>  <!-- Increased -->
+    <param name="laser_model_type" value="likelihood_field"/>
+    
+    <!-- Odometry model parameters (differential drive) -->
+    <param name="odom_alpha1" value="0.2"/>        <!-- Rotation noise from rotation -->
+    <param name="odom_alpha2" value="0.2"/>        <!-- Rotation noise from translation -->
+    <param name="odom_alpha3" value="0.2"/>        <!-- Translation noise from translation -->
+    <param name="odom_alpha4" value="0.2"/>        <!-- Translation noise from rotation -->
+    <param name="odom_alpha5" value="0.1"/>        <!-- Translation noise -->
+  </node>
+</launch>

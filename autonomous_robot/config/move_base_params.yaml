@@ -1,0 +1,17 @@
+# Move base parameters
+
+# Shutdown behavior
+shutdown_costmaps: false
+
+# Planner selection
+base_global_planner: "navfn/NavfnROS"
+base_local_planner: "dwa_local_planner/DWAPlannerROS"
+
+# Recovery behaviors
+recovery_behavior_enabled: true
+clearing_rotation_allowed: true
+
+# NavfnROS global planner parameters
+NavfnROS:
+  allow_unknown: false
+  default_tolerance: 0.1

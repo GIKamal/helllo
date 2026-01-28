@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- RPLIDAR -->
+  <include file="$(find autonomous_robot)/launch/rplidar.launch"/>
+
+  <!-- URDF -->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find autonomous_robot)/urdf/robot.urdf'"/>
+
+  <!-- Robot State Publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
+    <param name="publish_frequency" value="50.0"/>
+  </node>
+
+  <!-- Joint State Publisher -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="false"/>
+  </node>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_laser" args="0 0 0.14 0 0 0 base_link laser" />
+
+  <!-- Motor Controller -->
+  <node name="motor_controller" pkg="autonomous_robot" type="motor_encoder_node.py" output="screen">
+    <param name="wheel_separation" value="0.15"/>
+    <param name="wheel_radius" value="0.0325"/>
+    <param name="max_rpm" value="130"/>
+    <param name="min_pwm_threshold" value="25"/>
+  </node>
+
+  <!-- Odometry Publisher -->
+  <node name="odometry_publisher" pkg="autonomous_robot" type="odometry_publisher.py" output="screen">
+    <param name="wheel_separation" value="0.15"/>
+    <param name="wheel_radius" value="0.0325"/>
+    <param name="pulses_per_revolution" value="400"/>
+    <param name="publish_tf" value="false"/>
+    <param name="odom_frame" value="odom"/>
+    <param name="base_frame" value="base_link"/>
+  </node>
+
+  <!-- MPU6050 IMU -->
+  <node name="mpu6050_node" pkg="autonomous_robot" type="mpu6050_node.py" output="screen">
+    <param name="frame_id" value="imu_link"/>
+    <param name="publish_rate" value="100"/>
+    <param name="calibrate_on_start" value="true"/>
+  </node>
+
+  <!-- EKF -->
+  <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true" output="screen">
+    <rosparam file="$(find autonomous_robot)/config/ekf.yaml" command="load"/>
+    <remap from="odometry/filtered" to="odom_fused"/>
+  </node> -->
+
+  <!-- Gmapping -->
+  <include file="$(find autonomous_robot)/launch/gmapping.launch"/>
+
+  <!-- Teleop -->
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
+    <remap from="cmd_vel" to="/cmd_vel"/>
+    <param name="scale_linear" value="0.9"/>
+    <param name="scale_angular" value="4.0"/>
+  </node>
+
+  <!-- RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find autonomous_robot)/rviz/mapping.rviz" required="false"/>
+
+  <!-- UI node -->
+  <!-- <node name="robot_ui" pkg="autonomous_robot" type="robot_control_ui.py" output="screen"/> -->
+</launch>
